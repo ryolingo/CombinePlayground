@@ -1,21 +1,24 @@
-//
-//  ContentView.swift
-//  ReactivePlayground
-//
-//  Created by matsumotoryota on 2025/11/01.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+  @State private var message: String = ""
+  private let viewModel =  CounterViewModel()
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+      
+      VStack {
+        Text(message.isEmpty ? "Start!" : message)
+          .font(.largeTitle)
+          
+        Button("Increment") {
+          viewModel.increment()
         }
-        .padding()
+        .buttonStyle(.borderedProminent)
+      }
+      .onAppear {
+        viewModel.evenNumberPublisher.subscribe{ text in
+          self.message = text
+        }
+      }
     }
 }
 
