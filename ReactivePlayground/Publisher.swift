@@ -11,6 +11,7 @@ final class Publisher<Value> {
   private var subscribers: [(Value) -> Void] = []
 
   func send(_ value: Value) {
+    print("Publisher\(Value.self)send:", value)
     subscribers.forEach { $0(value) }
   }
 
@@ -26,7 +27,11 @@ extension Publisher {
   > {
     let newPublisher = Publisher<NewValue>()
     self.subscribe { value in
-      newPublisher.send(transform(value))
+      print("受け取った")
+      let newValue = transform(value)
+      print("[Map]変換後:", newValue)
+      newPublisher.send(newValue)
+      print("")
     }
     return newPublisher
   }
@@ -36,8 +41,12 @@ extension Publisher {
     let newPublisher = Publisher<Value>()
 
     self.subscribe { value in
+      print("🔎 [Filter] 受け取った:", value)
       if isIncluded(value) {
+        print("Filter通過:", value)
         newPublisher.send(value)
+      } else {
+        print("除外")
       }
     }
     return newPublisher//←これに対してmapが呼ばれるここはオブジェクト自体を返している部分。
