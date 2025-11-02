@@ -8,15 +8,22 @@
 import Foundation
 
 final class Publisher<Value> {
-  private var subscribers: [(Value) -> Void] = []
+  private var subscribers: [(id: UUID, handler: (Value) -> Void)] = []
 
   func send(_ value: Value) {
     print("Publisher\(Value.self)send:", value)
-    subscribers.forEach { $0(value) }
+    subscribers.forEach { $0.handler(value) }
   }
 
-  func subscribe(_ receiveValue: @escaping (Value) -> Void) {
-    subscribers.append(receiveValue)
+  func subscribe(_ receiveValue: @escaping (Value) -> Void) -> AnyCancellable {
+    let id = UUID()
+    subscribers.append((id, receiveValue))
+    
+    //解除処理をクロージャで返す
+    return AnyCancellable { [weak self] in
+      self?.subscribers.removeAll{ $0.id == id}
+      print("Subscription cancelled")
+    }
   }
 }
 

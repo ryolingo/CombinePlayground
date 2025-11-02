@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
   @State private var message: String = ""
   private let viewModel =  CounterViewModel()
+  
     var body: some View {
       
       VStack {
@@ -15,7 +16,7 @@ struct ContentView: View {
         .buttonStyle(.borderedProminent)
       }
       .onAppear {
-        viewModel.evenNumberPublisher.subscribe{ text in
+        viewModel.starObserving{ text in
           self.message = text
         }
       }
@@ -23,5 +24,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+  ContentView()
 }
